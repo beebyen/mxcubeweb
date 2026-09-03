@@ -1,5 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
 import { executeCommand } from '../actions/beamline';
 import GenericEquipment from '../components/Equipment/GenericEquipment';

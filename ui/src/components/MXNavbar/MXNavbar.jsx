@@ -10,7 +10,9 @@ import styles from './MXNavbar.module.css';
 function MXNavbar() {
   const isUserLogin = useSelector((state) => state.login.loginType === 'User');
   const selectedProposal = useSelector((state) => state.login.selectedProposal);
-  const { nickname, fullname } = useSelector((state) => state.login.user);
+  const { nickname, fullname, isstaff } = useSelector(
+    (state) => state.login.user,
+  );
   const inControl = useSelector((state) => state.login.user.inControl);
   const showForStaffOnly = useSelector(
     (state) => state.uiproperties?.equipment?.show_for_staff_only ?? false,
