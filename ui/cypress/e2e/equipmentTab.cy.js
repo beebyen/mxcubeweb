@@ -1,14 +1,9 @@
 /* global cy, it, describe */
+
 function setEquipmentVisibility(showForStaffOnly) {
   cy.intercept('GET', '**/uiproperties', (request) => {
     request.continue((response) => {
-      response.send({
-        ...response.body,
-        equipment: {
-          ...response.body.equipment,
-          show_for_staff_only: showForStaffOnly,
-        },
-      });
+      response.body.equipment.show_for_staff_only = showForStaffOnly;
     });
   });
 }
@@ -19,15 +14,13 @@ function logInAsNonStaff() {
   // without the staff role.
   cy.intercept('GET', '**/login_info', (request) => {
     request.continue((response) => {
-      response.send({
-        ...response.body,
-        user: { ...response.body.user, isstaff: false },
-      });
+      if (response.body.loggedIn) {
+        response.body.user.isstaff = false;
+      }
     });
-  }).as('nonStaffLoginInfo');
+  });
 
   cy.login();
-  cy.wait('@nonStaffLoginInfo');
   cy.findByRole('heading', { name: 'MXCuBE-Web (OSC)' }).should('be.visible');
 }
 
