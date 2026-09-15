@@ -3,19 +3,28 @@
 function setEquipmentVisibility(showForStaffOnly) {
   cy.intercept('GET', '**/uiproperties', (request) => {
     request.continue((response) => {
-      response.body.equipment.show_for_staff_only = showForStaffOnly;
+      response.send({
+        ...response.body,
+        equipment: {
+          ...response.body.equipment,
+          show_for_staff_only: showForStaffOnly,
+        },
+      });
     });
   });
 }
 
 function logInAsNonStaff() {
-  // The test backend only authenticates idtest0, which is a staff user.
-  // Change the login response to represent a successfully authenticated user
+  // The test backend only authenticates idtest0, who is a staff user.
+  // Intercept to set the user to be non-staff for testing
   // without the staff role.
   cy.intercept('GET', '**/login_info', (request) => {
     request.continue((response) => {
       if (response.body.loggedIn) {
-        response.body.user.isstaff = false;
+        response.send({
+          ...response.body,
+          user: { ...response.body.user, isstaff: false },
+        });
       }
     });
   });
@@ -23,7 +32,6 @@ function logInAsNonStaff() {
   cy.login();
   cy.findByRole('heading', { name: 'MXCuBE-Web (OSC)' }).should('be.visible');
 }
-
 describe('Equipment tab visibility', () => {
   it('is visible to staff users when staff-only access is enabled', () => {
     setEquipmentVisibility(true);
