@@ -19,6 +19,14 @@ function EquipmentContainer() {
   const scState = useSelector((state) => state.sampleChanger.state);
   const haContents = useSelector((state) => state.harvester.contents);
   const haState = useSelector((state) => state.harvester.state);
+  const isStaff = useSelector((state) => state.login.user.isstaff);
+  const showForStaffOnly = useSelector(
+    (state) => state.uiproperties?.equipment?.show_for_staff_only ?? false,
+  );
+
+  if (showForStaffOnly && !isStaff) {
+    return <Navigate to="/datacollection" replace />;
+  }
 
   return (
     <Container fluid className="mt-3">

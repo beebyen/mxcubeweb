@@ -12,6 +12,10 @@ function MXNavbar() {
   const selectedProposal = useSelector((state) => state.login.selectedProposal);
   const { nickname, fullname } = useSelector((state) => state.login.user);
   const inControl = useSelector((state) => state.login.user.inControl);
+  const showForStaffOnly = useSelector(
+    (state) => state.uiproperties?.equipment?.show_for_staff_only ?? false,
+  );
+  const canAccessEquipment = !showForStaffOnly || isstaff;
 
   const mode = useSelector((state) => state.general.mode);
   const numObservers = useSelector(
@@ -61,9 +65,11 @@ function MXNavbar() {
             >
               Data collection
             </Nav.Link>
-            <Nav.Link as={NavLink} className={styles.navLink} to="/equipment">
-              Equipment
-            </Nav.Link>
+            {canAccessEquipment && (
+              <Nav.Link as={NavLink} className={styles.navLink} to="/equipment">
+                Equipment
+              </Nav.Link>
+            )}
           </Nav>
           <Nav className={styles.subNav}>
             <Nav.Link as={NavLink} className={styles.navLink} to="/help">
