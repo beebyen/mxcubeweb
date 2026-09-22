@@ -1,11 +1,17 @@
 /* global cy, it, describe */
 
 function setEquipmentVisibility(showForStaffOnly) {
-  cy.intercept('GET', '**/uiproperties', (request) => {
-    request.continue((response) => {
-      response.body.equipment.show_for_staff_only = showForStaffOnly;
+    cy.intercept('GET', '**/uiproperties', (request) => {
+      request.continue((response) => {
+        response.send({
+          ...response.body,
+          equipment: {
+            ...response.body.equipment,
+            show_for_staff_only: showForStaffOnly,
+          },
+        });
+      });
     });
-  });
 }
 
 function logInAsNonStaff() {
@@ -13,11 +19,14 @@ function logInAsNonStaff() {
   // Change the login response to represent a successfully authenticated user
   // without the staff role.
   cy.intercept('GET', '**/login_info', (request) => {
-    request.continue((response) => {
-      if (response.body.loggedIn) {
-        response.body.user.isstaff = false;
-      }
-    });
+      request.continue((response) => {
+        if (response.body.loggedIn) {
+          response.send({
+            ...response.body,
+            user: { ...response.body.user, isstaff: false },
+          });
+        }
+      });
   });
 
   cy.login();
